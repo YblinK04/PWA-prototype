@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Этот репозиторий содержит технический прототип для перехода от Telegram-бота к PWA-платформе. Основной упор сделан на безопасную интеграцию с n8n и адаптивность контента под категории пользователей.
 
-## Getting Started
+🚀 Стек технологий
 
-First, run the development server:
+- Framework: Next.js 15 (App Router)
+- State Management: Zustand (локальный UI и сессия)
+- Data Fetching: TanStack Query (кэширование и синхронизация с n8n)
+- Validation: Zod (типизация ответов от low-code бэкенда)
+- UI/UX: Tailwind CSS
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🛠 Ключевые архитектурные решения
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Auth & Security: Реализован API-прокси для проверки подписи initData от Telegram. Это защищает систему от поддельных запросов с telegram_id и обеспечивает бесшовный вход.
+- Adaptive Tracks: Логика сегментации из квизов (например, Burnout или Single/Relationship) используется для фильтрации контента на стороне n8n. Фронтенд работает как тонкий клиент, отображая персонализированную "Лестницу".
+- AI Feedback Loop: Форма отправки отчетов поддерживает механизм polling. Так как - - - AI-анализ в n8n может занимать 10+ секунд, интерфейс автоматически опрашивает статус задачи в фоне, не блокируя пользователя.
+- n8n-First Approach: Код не дублирует бизнес-логику, которая уже есть в воркфлоу n8n, а лишь предоставляет интерфейс для взаимодействия с существующими вебхуками.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+📂 Структура проекта
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- app/api/profile/route.ts — основной эндпоинт авторизации. Здесь же описаны Zod-схемы для валидации ответов от n8n.
+- stores/ — управление состоянием профиля и квизов (Zustand).
+- hooks/ — асинхронная логика и взаимодействие с API (TanStack Query).
+- components/ — UI-компоненты личного кабинета и выбора трека.
 
-## Learn More
+## 🛠 Ключевые решения
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Security**: API-роут проверяет подпись `initData` от Telegram (HMAC-SHA256). Это защищает систему от подделки запросов.
+2. **Segmentation**: Приложение получает категорию из квиза (напр. _Burnout_) и адаптирует "Лестницу" под юзера через n8n.
+3. **AI Polling**: Форма отчёта умеет "ждать" ответ от нейронки, опрашивая бэкенд в фоне (механизм polling), что важно при долгих ответах AI.
+4. **n8n Integration**: Фронтенд работает как тонкий клиент, не дублируя бизнес-логику бэкенда.
