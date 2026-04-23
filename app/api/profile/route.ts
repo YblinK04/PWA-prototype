@@ -13,7 +13,7 @@ import { z } from 'zod';
         tags: z.array(z.string()).optional(),
     }).optional(),
     student_data: z.object({
-        social_profile: z.string().optional(), // 'single' или 'relationship'
+        social_profile: z.string().optional(), 
     }).optional(),
 });
 
